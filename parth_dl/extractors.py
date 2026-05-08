@@ -411,10 +411,36 @@ class MediaExtractor(BaseExtractor):
                 'height': dims.get('height'),
                 'format_id': 'graphql-image',
             })
-        
+
+        # Carousel
+        sidecar_edges = media.get('edge_sidecar_to_children', {}).get('edges', [])
+        if sidecar_edges:
+            result['type'] = 'carousel'
+            result['images'] = []
+            result['formats'] = []
+            for idx, edge in enumerate(sidecar_edges):
+                node = edge.get('node', {})
+                dims = node.get('dimensions', {})
+                if node.get('is_video'):
+                    result['formats'].append({
+                        'url': node.get('video_url'),
+                        'width': dims.get('width'),
+                        'height': dims.get('height'),
+                        'format_id': f"carousel-video-{idx}",
+                        'has_audio': True,
+                        'type': 'video',
+                    })
+                else:
+                    result['images'].append({
+                        'url': node.get('display_url'),
+                        'width': dims.get('width'),
+                        'height': dims.get('height'),
+                        'format_id': f"carousel-image-{idx}",
+                    })
+
         # Thumbnail
         result['thumbnail'] = media.get('display_url') or media.get('thumbnail_src')
-        
+
         return result
 
 
