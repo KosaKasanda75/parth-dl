@@ -390,7 +390,7 @@ class MediaExtractor(BaseExtractor):
             'thumbnail': None,
             'duration': media.get('video_duration'),
             'uploader': media.get('owner', {}).get('username', 'unknown'),
-            'upload_date': self._parse_taken_at(media.get('taken_at')),
+            'upload_date': self._parse_taken_at(media.get('taken_at') or media.get('taken_at_timestamp')),
             'type': 'video' if media.get('is_video') else 'image',
         }
         
