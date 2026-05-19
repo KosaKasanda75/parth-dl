@@ -172,6 +172,8 @@ class InstagramDownloader:
         print(f"\n{'='*70}")
         print(f"Title: {info.get('title', 'Untitled')}")
         print(f"Uploader: @{info.get('uploader', 'unknown')}")
+        if info.get('upload_date'):
+            print(f"Upload Date: {info['upload_date']}")
         print(f"Type: {media_type}")
         print(f"{'='*70}\n")
         
@@ -250,6 +252,8 @@ class InstagramDownloader:
         
         print(f"\nMedia: {info.get('title', 'Untitled')}")
         print(f"Uploader: @{info.get('uploader', 'unknown')}")
+        if info.get('upload_date'):
+            print(f"Upload Date: {info['upload_date']}")
         print(f"Type: {info.get('type', 'unknown')}")
         print(f"{'='*70}\n")
         

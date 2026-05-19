@@ -7,6 +7,7 @@ import re
 import json
 import urllib.request
 import urllib.parse
+from datetime import datetime, timezone
 from .utils import (
     retry_on_failure, RateLimitError, NetworkError, 
     DownloadError, extract_instagram_id, extract_username
@@ -295,6 +296,15 @@ class MediaExtractor(BaseExtractor):
         
         return None
     
+    def _parse_taken_at(self, taken_at):
+        """Convert taken_at Unix timestamp to ISO 8601 date string"""
+        if not taken_at:
+            return None
+        try:
+            return datetime.fromtimestamp(int(taken_at), tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+        except (ValueError, OSError):
+            return None
+
     def _parse_media_item(self, item):
         """Parse API format media item"""
         result = {
@@ -305,6 +315,7 @@ class MediaExtractor(BaseExtractor):
             'thumbnail': None,
             'duration': item.get('video_duration'),
             'uploader': item.get('user', {}).get('username', 'unknown'),
+            'upload_date': self._parse_taken_at(item.get('taken_at')),
             'type': 'video' if item.get('video_versions') else 'image',
         }
         
@@ -379,6 +390,7 @@ class MediaExtractor(BaseExtractor):
             'thumbnail': None,
             'duration': media.get('video_duration'),
             'uploader': media.get('owner', {}).get('username', 'unknown'),
+            'upload_date': self._parse_taken_at(media.get('taken_at')),
             'type': 'video' if media.get('is_video') else 'image',
         }
         
